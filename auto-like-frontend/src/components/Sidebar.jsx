@@ -5,7 +5,6 @@ import {
   FiMonitor,
   FiClock,
   FiSettings,
-  FiGlobe,
 } from 'react-icons/fi'
 
 const navItems = [
@@ -49,16 +48,6 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
-        <div className="sidebar-section-title">Links</div>
-        <a
-          href="https://al.socialauto.tech"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="sidebar-link"
-        >
-          <span className="icon"><FiGlobe /></span>
-          Production
-        </a>
       </nav>
 
       {/* Footer */}

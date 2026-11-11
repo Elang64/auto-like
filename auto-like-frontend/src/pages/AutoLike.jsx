@@ -11,6 +11,7 @@ export default function AutoLike() {
   const [isRunning, setIsRunning] = useState(false)
   const [logs, setLogs] = useState([])
   const [results, setResults] = useState(null)
+  const [accountStatuses, setAccountStatuses] = useState({})
 
   const addLog = useCallback((message, type = 'info') => {
     const time = new Date().toLocaleTimeString('id-ID')
@@ -56,6 +57,7 @@ export default function AutoLike() {
     setIsRunning(true)
     setLogs([])
     setResults(null)
+    setAccountStatuses({})
 
     addLog(`🚀 Memulai Auto-Like untuk ${selectedAccounts.length} akun...`, 'info')
     addLog(`📎 Target URL: ${url}`, 'info')
@@ -67,6 +69,9 @@ export default function AutoLike() {
       const account = ACCOUNTS.find((a) => a.id === accountId)
       addLog(`\n${'='.repeat(40)}`, 'info')
       addLog(`[*] Memproses: ${account.name} (${accountId} - Port ${account.port})`, 'info')
+
+      // Set akun ini ke pending
+      setAccountStatuses((prev) => ({ ...prev, [accountId]: 'pending' }))
 
       try {
         // Coba call API backend
@@ -84,10 +89,12 @@ export default function AutoLike() {
             addLog(`[+] ✅ Like berhasil untuk ${account.name}!`, 'success')
             taskResults.success++
             taskResults.details.push({ account: account.name, status: 'success' })
+            setAccountStatuses((prev) => ({ ...prev, [accountId]: 'success' }))
           } else {
             addLog(`[-] ❌ Like gagal: ${data.message || 'Unknown error'}`, 'error')
             taskResults.failed++
             taskResults.details.push({ account: account.name, status: 'failed', error: data.message })
+            setAccountStatuses((prev) => ({ ...prev, [accountId]: 'failed' }))
           }
         } else {
           throw new Error(`HTTP ${response.status}`)
@@ -105,10 +112,12 @@ export default function AutoLike() {
           addLog(`[+] ✅ Like berhasil untuk ${account.name}! (simulasi)`, 'success')
           taskResults.success++
           taskResults.details.push({ account: account.name, status: 'success' })
+          setAccountStatuses((prev) => ({ ...prev, [accountId]: 'success' }))
         } else {
           addLog(`[-] ❌ Like gagal untuk ${account.name} (simulasi)`, 'error')
           taskResults.failed++
           taskResults.details.push({ account: account.name, status: 'failed' })
+          setAccountStatuses((prev) => ({ ...prev, [accountId]: 'failed' }))
         }
       }
 
@@ -168,6 +177,7 @@ export default function AutoLike() {
                   selectedAccounts={selectedAccounts}
                   onToggle={handleToggleAccount}
                   onSelectAll={handleSelectAll}
+                  accountStatuses={accountStatuses}
                 />
               </div>
 
